@@ -1,16 +1,14 @@
-const Part = ( { part, exercises } ) => {
+const Part = ( { part } ) => {
     return (
         <p>
-            {part} {exercises}
+            {part.name} {part.exercises}
         </p>
     )
 }
-const Content = ( { part1, part2, part3 } ) => {
+const Content = ( { parts } ) => {
     return (
         <>
-            <Part part={part1.name} exercises={part1.exercises} />
-            <Part part={part2.name} exercises={part2.exercises} />
-            <Part part={part3.name} exercises={part3.exercises} />
+            { parts.map( part => <Part part={part} /> ) }
         </>
     )
 }

@@ -1,4 +1,4 @@
-const Total = ( { exercises1, exercises2, exercises3 } ) => <p>Number of exercises { exercises1 + exercises2 + exercises3 }</p>
+const Total = ( { parts } ) => <p>Number of exercises { parts.map( part => part.exercises).reduce( (accumulator, currentValue) => accumulator + currentValue ) }</p>
 
 /*
 const Total = (props) => {
