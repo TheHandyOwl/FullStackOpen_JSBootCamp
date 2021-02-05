@@ -5,24 +5,31 @@ const Button = ({ text, handleClick }) => <button onClick={handleClick}>{text}</
 
 const Statistic = ({ text, value }) => <p>{text}: <span style={{ color: "blue", fontWeight: "bold" }}>{value}</span></p>
 
-//const Statistics = ({ good, neutral, bad }) => {
-const Statistics = ({ good, neutral, bad }) => {
-  const statisticsAll = good + neutral + bad
-  const statisticsAvg = isNaN(((good - bad) / (good + neutral + bad)).toFixed(2)) ? "0" : ((good - bad) / (good + neutral + bad)).toFixed(2)
-  const statisticsPositive = `${isNaN((good / (good + neutral + bad)).toFixed(2)) ? 0 : (good / (good + neutral + bad)).toFixed(2)}%`
+const StatisticTRTD = ({ text, value }) => {
+  return(
+    <tr>
+      <td>{text}:</td>
+      <td style={{ color: "blue", fontWeight: "bold" }}>{value}</td>
+    </tr>
+  )
+}
 
-  const hasData = (good > 0 || neutral > 0 || bad > 0) ? true : false
+const Statistics = ({ stats }) => {
+  stats.all = stats.good + stats.neutral + stats.bad
+  stats.average = isNaN(((stats.good - stats.bad) / stats.all ).toFixed(2)) ? "0" : ((stats.good - stats.bad) / stats.all).toFixed(2)
+  stats.positive = `${isNaN((stats.good / stats.all).toFixed(2)) ? 0.00 : (stats.good / stats.all).toFixed(2)}%`
+
+  const hasData = (stats.good > 0 || stats.neutral > 0 || stats.bad > 0) ? true : false
 
   const withStats = () => {
     return (
       <>
         <h2>Statistics</h2>
-        <Statistic text='Good' value={good} />
-        <Statistic text='Neutral' value={neutral} />
-        <Statistic text='Bad' value={bad} />
-        <Statistic text='All' value={statisticsAll} />
-        <Statistic text='Average' value={statisticsAvg} />
-        <Statistic text='Positive' value={statisticsPositive} />
+        <table>
+          <tbody>
+            { Object.keys(stats).map( (item, i) => <StatisticTRTD key={i} text={item} value={stats[item]} /> ) }
+          </tbody>
+        </table>
       </>
     )
   }
@@ -62,7 +69,7 @@ const App = () => {
       <Button text='good' handleClick={() => addGood(good)} />
       <Button text='neutral' handleClick={() => addNeutral(neutral)} />
       <Button text='bad' handleClick={() => addBad(bad)} />
-      <Statistics good={good} neutral={neutral} bad={bad} />
+      <Statistics stats={{good, neutral, bad}} />
       <h2>Reset</h2>
       <Button text='Reset statistics' handleClick={() => resetStats()} />
     </div>
