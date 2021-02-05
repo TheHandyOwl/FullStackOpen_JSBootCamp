@@ -12,6 +12,10 @@ const App = () => {
   const addNeutral = (neutral) => setNeutral(neutral+1)
   const addBad = (bad) => setBad(bad+1)
 
+  const statisticsAll = good + neutral + bad
+  const statisticsAvg = ( (good - bad ) / (good + neutral + bad) ).toFixed(2)
+  const statisticsPositive = `${(good / ( good + neutral + bad )).toFixed(2)}%`
+
   return (
     <div className="App">
       <h2>Give feedback</h2>
@@ -22,6 +26,9 @@ const App = () => {
       <p>Good: { good }</p>
       <p>Neutral: { neutral }</p>
       <p>Bad: { bad }</p>
+      <p>All: { statisticsAll }</p>
+      <p>Average: { statisticsAvg }</p>
+      <p>Positive: { statisticsPositive }</p>
     </div>
   );
 }
