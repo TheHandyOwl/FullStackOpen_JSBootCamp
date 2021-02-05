@@ -3,25 +3,43 @@ import './App.css';
 
 const Button = ({ text, handleClick }) => <button onClick={handleClick}>{text}</button>
 
-const StatisticLine = ({ text, calc }) => <p>{text}: <span style={{ color: "blue", fontWeight: "bold" }}>{calc}</span></p>
+const Statistic = ({ text, value }) => <p>{text}: <span style={{ color: "blue", fontWeight: "bold" }}>{value}</span></p>
 
 //const Statistics = ({ good, neutral, bad }) => {
-const Statistics = ({good, neutral, bad}) => {
+const Statistics = ({ good, neutral, bad }) => {
   const statisticsAll = good + neutral + bad
   const statisticsAvg = isNaN(((good - bad) / (good + neutral + bad)).toFixed(2)) ? "0" : ((good - bad) / (good + neutral + bad)).toFixed(2)
   const statisticsPositive = `${isNaN((good / (good + neutral + bad)).toFixed(2)) ? 0 : (good / (good + neutral + bad)).toFixed(2)}%`
 
+  const hasData = (good > 0 || neutral > 0 || bad > 0) ? true : false
+
+  const withStats = () => {
+    return (
+      <>
+        <h2>Statistics</h2>
+        <Statistic text='Good' value={good} />
+        <Statistic text='Neutral' value={neutral} />
+        <Statistic text='Bad' value={bad} />
+        <Statistic text='All' value={statisticsAll} />
+        <Statistic text='Average' value={statisticsAvg} />
+        <Statistic text='Positive' value={statisticsPositive} />
+      </>
+    )
+  }
+
+  const withoutStats = () => {
+    return (
+      <>
+        <h2>Statistics</h2>
+        <p>No feedback given</p>
+      </>
+    )
+  }
+
   return (
-    <>
-      <h2>Statistics</h2>
-      <StatisticLine text='Good' calc={good} />
-      <StatisticLine text='Neutral' calc={neutral} />
-      <StatisticLine text='Bad' calc={bad} />
-      <StatisticLine text='All' calc={statisticsAll} />
-      <StatisticLine text='Average' calc={statisticsAvg} />
-      <StatisticLine text='Positive' calc={statisticsPositive} />
-    </>
+    hasData ? withStats() : withoutStats()
   )
+
 }
 
 const App = () => {
@@ -32,6 +50,11 @@ const App = () => {
   const addGood = (good) => setGood(good + 1)
   const addNeutral = (neutral) => setNeutral(neutral + 1)
   const addBad = (bad) => setBad(bad + 1)
+  const resetStats = () => {
+    setGood(0)
+    setNeutral(0)
+    setBad(0)
+  }
 
   return (
     <div className="App">
@@ -40,6 +63,8 @@ const App = () => {
       <Button text='neutral' handleClick={() => addNeutral(neutral)} />
       <Button text='bad' handleClick={() => addBad(bad)} />
       <Statistics good={good} neutral={neutral} bad={bad} />
+      <h2>Reset</h2>
+      <Button text='Reset statistics' handleClick={() => resetStats()} />
     </div>
   );
 }
