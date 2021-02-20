@@ -1,26 +1,29 @@
 import './App.css';
 import { useEffect, useState } from 'react';
 import { Post } from './Post';
-import axios from 'axios';
+
+/*
+import {getAllPosts} from './services/posts/getAllPosts'
+import {createNewPost} from './services/posts/createNewPost'
+*/
+import {createNewPost, getAllPosts} from './services/posts/index'
 
 const App = () => {
   const [posts, setPosts] = useState([])
   const [newPost, setNewPost] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    //console.log("useEffect")
     setLoading(true)
-    setTimeout(() => {
-      axios.get("http://localhost:3001/posts")
-      //.then(response => response.json())
-      .then(response => {
-        console.log(response)
-        setLoading(false)
-        const data = response.data
-        setPosts(data)
+    getAllPosts()
+      .then( posts => {
+        setPosts(posts)
+        setLoading(false)  
+      } )
+      .catch(e => {
+        console.log(e)
       })
-    }, 2000);
   }, [])
 
   const handleChange = (event) => {
@@ -31,12 +34,23 @@ const App = () => {
     event.preventDefault()
     const postToAddToState = {
       userId: 1,
-      id: posts.length + 1,
       title: newPost,
       body: newPost.concat(" ", new Date().toISOString())
     }
-    console.log("New post:", postToAddToState)
-    setPosts([...posts, postToAddToState])
+
+    setError('')
+
+    // El 'id' se genera sólo
+    createNewPost(postToAddToState)
+      .then( newPost => {
+        console.log("New post:", newPost)
+        setPosts( prevNotes => [...prevNotes, newPost])
+      })
+      .catch(e => {
+        console.log(e)
+        setError('La API ha petado')
+      })
+
     setNewPost('')
   }
 
@@ -49,6 +63,7 @@ const App = () => {
       </form>
       <h1>Posts</h1>
       { loading ? "Cargando ..." : "" }
+      { error.length !== 0 ? <span style={{"color": "red"}}>{error}</span> : "" }
       { posts
         .map(post => <Post key={post.id} {...post} />)
       }
