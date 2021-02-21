@@ -1,13 +1,5 @@
-import Content from './Content';
-import Header from './Header';
+import Course from './Course';
 
-const Courses = ({ courses }) => courses.map( course => {
-  return (
-    <div key={course.id}>
-      <Header name={course.name} />
-      <Content parts={course.parts} />
-    </div>
-  )
-})
+const Courses = ({ courses }) => courses.map( course => <Course key={course.id} course={course} />)
 
 export default Courses;
