@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import Numbers from './Numbers'
+import ContactForm from './ContactForm'
+import FilterContactName from './FilterContactName'
 
 const App = (props) => {
-
   const [persons, setPersons] = useState(props.persons)
+  const [nameFilter, setNameFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [nameFilter, setNameFilter] = useState('')
 
   const handleClickOnSubmit = (event) => {
     event.preventDefault()
@@ -101,30 +102,14 @@ const App = (props) => {
     setNewNumber(formattedNumber)
   }
 
-  const filteredPersons = persons.filter( person => person.name.toLowerCase().includes(nameFilter.toLowerCase()) )
+  const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(nameFilter.toLowerCase()))
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>filter shown with: <input value={nameFilter} onChange={handleNameFilterOnChange} /></div>
-      <h2>Add new contact</h2>
-      <form onSubmit={handleClickOnSubmit}>
-        <div>name: <input value={newName} onChange={handleNameOnChange} /></div>
-        <div>number: <input value={newNumber} onChange={handleNumberOnChange} onKeyPress={handleNumberKeyPress} /></div>
-        <div>
-          <button>add</button>
-        </div>
-        {<div>debug: {newName}</div>}
-        {<div>debug: {newNumber}</div>}
-        {<div>debug: {nameFilter}</div>}
-      </form>
-      <h2>Numbers</h2>
-      {
-        (
-          (filteredPersons === undefined) || (filteredPersons === null) || (filteredPersons === false) || (filteredPersons.length === 0)
-        ) ? <p>Your phonebook is empty</p>
-          : <Numbers persons={filteredPersons} />
-      }
+      <FilterContactName handleNameFilterOnChange={handleNameFilterOnChange} nameFilter={nameFilter} />
+      <ContactForm newName={newName} newNumber={newNumber} handleClickOnSubmit={handleClickOnSubmit} handleNameOnChange={handleNameOnChange} handleNumberOnChange={handleNumberOnChange} handleNumberKeyPress={handleNumberKeyPress} />
+      <Numbers filteredPersons={filteredPersons} />
     </div>
   )
 }
