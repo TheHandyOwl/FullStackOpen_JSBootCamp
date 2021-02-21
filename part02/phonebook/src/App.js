@@ -15,15 +15,27 @@ const App = () => {
       name: newName
     }
 
-    setPersons(prevPersons => {
-      return [...prevPersons, nameToAddToState]
-        .sort((a, b) => {
-          var x = a.name.toLowerCase();
-          var y = b.name.toLowerCase();
-          return x < y ? -1 : x > y ? 1 : 0;
-        })
-    })
+    const personDoesExists = ({name}) => {
+      const alertMessage = `${name} is already added to phonebook`
+      alert(alertMessage)
+      return
+    }
 
+    const personDoesNotExists = () => {
+      setPersons(prevPersons => {
+        return [...prevPersons, nameToAddToState]
+          .sort((a, b) => {
+            var x = a.name.toLowerCase();
+            var y = b.name.toLowerCase();
+            return x < y ? -1 : x > y ? 1 : 0;
+          })
+      })
+    }
+
+    const personExists = persons.find(person => person.name === nameToAddToState.name)
+    personExists
+      ? personDoesExists(personExists)
+      : personDoesNotExists()
   }
 
   const handleOnChange = (event) => {
