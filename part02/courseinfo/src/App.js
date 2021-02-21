@@ -1,5 +1,12 @@
-import Course from './Course'
+import Courses from './Courses'
 
-const App = ({course}) => <Course course={course} />
+const App = ({courses}) => {
+    return(
+        <>
+            <h1>Web Development curriculum</h1>
+            <Courses courses={courses} />
+        </>
+    )
+}
 
 export default App;
