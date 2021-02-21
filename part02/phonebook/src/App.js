@@ -1,13 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Numbers from './Numbers'
 import ContactForm from './ContactForm'
 import FilterContactName from './FilterContactName'
 
-const App = (props) => {
-  const [persons, setPersons] = useState(props.persons)
+import { createNewPerson } from './services/persons/createNewPerson'
+import { getAllPersons } from './services/persons/getAllPersons'
+
+const App = () => {
+  const [persons, setPersons] = useState([])
   const [nameFilter, setNameFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    getAllPersons()
+      .then(persons => {
+        setPersons(persons)
+      })
+      .catch(e => console.log(e))
+  }, [])
 
   const handleClickOnSubmit = (event) => {
     event.preventDefault()
@@ -40,14 +52,25 @@ const App = (props) => {
     }
 
     const savePersons = () => {
-      setPersons(prevPersons => {
-        return [...prevPersons, contactToAddToState]
-          .sort((a, b) => {
-            var x = a.name.toLowerCase();
-            var y = b.name.toLowerCase();
-            return x < y ? -1 : x > y ? 1 : 0;
-          })
-      })
+
+      createNewPerson(contactToAddToState)
+        .then(newPerson => {
+          console.log("New person:", newPerson)
+          setPersons(prevPersons => [...prevPersons, newPerson]
+            .sort((a, b) => {
+              var x = a.name.toLowerCase();
+              var y = b.name.toLowerCase();
+              return x < y ? -1 : x > y ? 1 : 0;
+            })
+          )
+        })
+        .catch(e => {
+          console.log(e)
+          setError('La API ha petado')
+          setTimeout(() => {
+            setError('')
+          }, 3000);
+        })
       setNewName('')
       setNewNumber('')
     }
@@ -109,6 +132,7 @@ const App = (props) => {
       <h2>Phonebook</h2>
       <FilterContactName handleNameFilterOnChange={handleNameFilterOnChange} nameFilter={nameFilter} />
       <ContactForm newName={newName} newNumber={newNumber} handleClickOnSubmit={handleClickOnSubmit} handleNameOnChange={handleNameOnChange} handleNumberOnChange={handleNumberOnChange} handleNumberKeyPress={handleNumberKeyPress} />
+      { error.length !== 0 ? <span style={{"color": "red"}}>{error}</span> : "" }
       <Numbers filteredPersons={filteredPersons} />
     </div>
   )
