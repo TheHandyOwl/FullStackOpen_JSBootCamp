@@ -6,6 +6,7 @@ const App = (props) => {
   const [persons, setPersons] = useState(props.persons)
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [nameFilter, setNameFilter] = useState('')
 
   const handleClickOnSubmit = (event) => {
     event.preventDefault()
@@ -61,6 +62,10 @@ const App = (props) => {
 
   }
 
+  const handleNameFilterOnChange = (event) => {
+    setNameFilter(event.target.value)
+  }
+
   const handleNameOnChange = (event) => {
     setNewName(event.target.value)
   }
@@ -69,7 +74,6 @@ const App = (props) => {
     var code = (event.which) ? event.which : event.keyCode;
 
     if (!((code === 8) || (code === 13) || (code >= 48 && code <= 57))) { // not backspace or intro or number
-      console.log("in code:", code)
       event.returnValue = false;
       event.preventDefault()
     }
@@ -97,9 +101,13 @@ const App = (props) => {
     setNewNumber(formattedNumber)
   }
 
+  const filteredPersons = persons.filter( person => person.name.toLowerCase().includes(nameFilter.toLowerCase()) )
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>filter shown with: <input value={nameFilter} onChange={handleNameFilterOnChange} /></div>
+      <h2>Add new contact</h2>
       <form onSubmit={handleClickOnSubmit}>
         <div>name: <input value={newName} onChange={handleNameOnChange} /></div>
         <div>number: <input value={newNumber} onChange={handleNumberOnChange} onKeyPress={handleNumberKeyPress} /></div>
@@ -108,13 +116,14 @@ const App = (props) => {
         </div>
         {<div>debug: {newName}</div>}
         {<div>debug: {newNumber}</div>}
+        {<div>debug: {nameFilter}</div>}
       </form>
       <h2>Numbers</h2>
       {
         (
-          (persons === undefined) || (persons === null) || (persons === false) || (persons.length === 0)
+          (filteredPersons === undefined) || (filteredPersons === null) || (filteredPersons === false) || (filteredPersons.length === 0)
         ) ? <p>Your phonebook is empty</p>
-          : <Numbers persons={persons} />
+          : <Numbers persons={filteredPersons} />
       }
     </div>
   )

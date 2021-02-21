@@ -5,10 +5,10 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const persons = [
-  {
-     name: 'Arto Hellas',
-     number: '666 666 666' 
-  }
+  { name: 'Arto Hellas', number: '123 456 789' },
+  { name: 'Ada Lovelace', number: '532 352 355' },
+  { name: 'Dan Abramov', number: '124 234 345' },
+  { name: 'Mary Poppendieck', number: '392 364 231' }
 ]
 
 ReactDOM.render(
