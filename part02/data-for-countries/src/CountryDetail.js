@@ -12,7 +12,7 @@ const CountryDetail = ({ country }) => {
             </p>
             <h2>Languages:</h2>
             <ul>
-                {country.languages.map(language => <li>{language.name}</li>)}
+                {country.languages.map(language => <li key={language.name}>{language.name}</li>)}
             </ul>
             <br />
             <img src={country.flag} width="100px" alt={ "Flag from ".concat(`${country.name}`)  }/>

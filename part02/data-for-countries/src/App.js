@@ -10,7 +10,7 @@ const App = () => {
   const [loading, setLoading] = useState(false)
   const [nameFilter, setNameFilter] = useState('')
   const [lastFilter, setLastFilter] = useState('')
-
+  
   useEffect(() => {
     setLoading(true)
     getAllCountries()
