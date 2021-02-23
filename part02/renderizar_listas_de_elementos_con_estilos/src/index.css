@@ -12,6 +12,17 @@ code {
     monospace;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  color: green;
+  font-style: italic;
+}
+
+li {
+  color: grey;
+  padding-top: 3px;
+  font-size: 15px;
+}
+
 .error {
   color: red;
   background: lightgray;
@@ -20,6 +31,12 @@ code {
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
+}
+
+.note {
+  color: grey;
+  padding-top: 5px;
+  font-size: 15px;
 }
 
 .successful {
