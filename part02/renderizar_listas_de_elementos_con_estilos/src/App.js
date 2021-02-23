@@ -1,7 +1,8 @@
 import './App.css';
 import { useState } from 'react';
 import { Note } from './Note';
-import {Notification} from './Notification'
+import {NotificationError} from './NotificationError'
+import {NotificationSuccessful} from './NotificationSuccessful'
 
 const App = (props) => {
   //const { notes } = props
@@ -9,6 +10,7 @@ const App = (props) => {
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [successfulMessage, setSuccessfulMessage] = useState(null)
 
   if ((notes === null) || (notes === undefined) || (notes === false) || (notes.length === 0)) {
     return "No tenemos notas que mostrar"
@@ -26,9 +28,14 @@ const App = (props) => {
       date: new Date().toISOString(),
       important: Math.random() < 0.5
     }
-    console.log("New note:", noteToAddToState)
     setNotes([...notes, noteToAddToState])
     setNewNote('')
+    setSuccessfulMessage(
+      `New note added: '${noteToAddToState.content}'`
+    )
+    setTimeout(() => {
+      setSuccessfulMessage(null)
+    }, 2000)
   }
 
   const handleClickShowAll = () => {
@@ -81,7 +88,8 @@ const App = (props) => {
   return (
     <div>
       <h1>Notes</h1>
-      <Notification message={errorMessage} />
+      <NotificationError message={errorMessage} />
+      <NotificationSuccessful message={successfulMessage} />
       <button onClick={handleClickShowAll}>
         {showAll ? "Show only important" : "Show all"}
       </button>
