@@ -6,6 +6,7 @@ import FilterContactName from './FilterContactName'
 import { createNewPerson } from './services/persons/createNewPerson'
 import { deleteOneContact } from './services/persons/deleteOneContact'
 import { getAllPersons } from './services/persons/getAllPersons'
+import { updateOneContact } from './services/persons/updateOneContact'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -27,22 +28,22 @@ const App = () => {
       })
       .catch(e => console.log(e))
   }, [])
-  
+
   const handleClickDeleteContact = (deleteThisContact) => {
-    const areYourSure = window.confirm()
+    const areYourSure = window.confirm(`Are you sure that you want to delete the contact named ${deleteThisContact.name}?`)
     if (areYourSure) {
       deleteOneContact(deleteThisContact.id)
-      .then(() => {
-        const newPersonsArray = persons.filter(person => person.id !== deleteThisContact.id)
-        setPersons(() => [...newPersonsArray])
-      })
-      .catch(e => {
-        console.log(e)
-        setError('La API ha petado')
-        setTimeout(() => {
-          setError('')
-        }, 3000);
-      })
+        .then(() => {
+          const newPersonsArray = persons.filter(person => person.id !== deleteThisContact.id)
+          setPersons(() => [...newPersonsArray])
+        })
+        .catch(e => {
+          console.log(e)
+          setError('La API ha petado')
+          setTimeout(() => {
+            setError('')
+          }, 3000);
+        })
     }
   }
 
@@ -53,6 +54,46 @@ const App = () => {
     const contactToAddToState = {
       name: newName,
       number: newNumber
+    }
+    const personExists = persons.find(person => person.name.toLowerCase() === contactToAddToState.name.toLowerCase())
+    
+    if (personExists) {
+      console.log("Dentro person:", personExists)
+      const alertMessage = `- ${personExists.name} is already added to phonebook`
+      alertMessages += alertMessage.concat('\n')
+    }
+
+    const updateContactNumber = (personExists) => {
+      const areYourSure = window.confirm(`Are you sure that you want to delete the contact named ${personExists.name}?`)
+
+      if (areYourSure) {
+        personExists.number = contactToAddToState.number
+        updateOneContact(personExists)
+        .then((response) => {
+          console.log(response)
+          const newPersonsArray = persons.map(person => person.id === response.id ? response : person)
+          setPersons(() => [...newPersonsArray])
+        })
+        .catch(e => {
+          console.log(e)
+          setError('La API ha petado')
+          setTimeout(() => {
+            setError('')
+          }, 3000)
+        })
+        setNewName('')
+        setNewNumber('')
+      }
+    }
+
+    const checkName = (newName) => {
+      if (newName.length !== 0) {
+        return true
+      } else {
+        const alertMessage = `- Put a name to this phone`
+        alertMessages += alertMessage.concat('\n')
+        return false
+      }
     }
 
     const checkNumberWithNineCharactersLong = (newNumber) => {
@@ -66,21 +107,10 @@ const App = () => {
       }
     }
 
-    const checkPersonExists = (contactToAddToState, persons) => {
-      const person = persons.find(person => person.name === contactToAddToState.name)
-      if (person) {
-        const alertMessage = `- ${person.name} is already added to phonebook`
-        alertMessages += alertMessage.concat('\n')
-        return true
-      }
-      return false
-    }
-
     const savePersons = () => {
 
       createNewPerson(contactToAddToState)
         .then(newPerson => {
-          console.log("New person:", newPerson)
           setPersons(prevPersons => [...prevPersons, newPerson]
             .sort((a, b) => {
               var x = a.name.toLowerCase();
@@ -100,12 +130,15 @@ const App = () => {
       setNewNumber('')
     }
 
-    const personExists = checkPersonExists(contactToAddToState, persons)
+    const checkNameOk = checkName(contactToAddToState.name)
     const checkNumberOk = checkNumberWithNineCharactersLong(contactToAddToState.number)
 
-    if (!personExists && checkNumberOk) {
+    if (!personExists && checkNameOk && checkNumberOk) {
       savePersons()
+    } else if (personExists && checkNameOk && checkNumberOk) {
+      updateContactNumber(personExists)
     } else {
+      console.log("Entra 3:", "Show messages")
       alert(alertMessages)
     }
 
