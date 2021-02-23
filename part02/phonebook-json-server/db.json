@@ -19,6 +19,11 @@
       "name": "Mary Poppendieck",
       "number": "392 364 231",
       "id": 4
+    },
+    {
+      "name": "Delete Me",
+      "number": "666 666 666",
+      "id": 5
     }
   ]
 }
