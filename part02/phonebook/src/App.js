@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import Numbers from './Numbers'
 import ContactForm from './ContactForm'
 import FilterContactName from './FilterContactName'
+import {NotificationError} from './NotificationError'
+import {NotificationSuccessful} from './NotificationSuccessful'
 
 import { createNewPerson } from './services/persons/createNewPerson'
 import { deleteOneContact } from './services/persons/deleteOneContact'
@@ -13,7 +15,8 @@ const App = () => {
   const [nameFilter, setNameFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [error, setError] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successfulMessage, setSuccessfulMessage] = useState(null)
 
   useEffect(() => {
     getAllPersons()
@@ -36,13 +39,26 @@ const App = () => {
         .then(() => {
           const newPersonsArray = persons.filter(person => person.id !== deleteThisContact.id)
           setPersons(() => [...newPersonsArray])
+          setSuccessfulMessage(`Contacto borrado: ${deleteThisContact.name}`)
+          setTimeout(() => {
+            setSuccessfulMessage(null)
+          }, 5000);
+          console.log("no entra")
         })
         .catch(e => {
-          console.log(e)
-          setError('La API ha petado')
+          if (e.response.status === 404) {
+            const newPersonsArray = persons.filter(person => person.id !== deleteThisContact.id)
+            setPersons(() => [...newPersonsArray])
+            setErrorMessage(`El contacto ${deleteThisContact.name} ya ha sido borrado en del servidor`)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000);
+            return
+          }
+          setErrorMessage('La API ha petado')
           setTimeout(() => {
-            setError('')
-          }, 3000);
+            setErrorMessage(null)
+          }, 5000);
         })
     }
   }
@@ -73,13 +89,17 @@ const App = () => {
           console.log(response)
           const newPersonsArray = persons.map(person => person.id === response.id ? response : person)
           setPersons(() => [...newPersonsArray])
+          setSuccessfulMessage(`Contacto actualizado: ${personExists.name} ahora tiene el teléfono ${personExists.number}`)
+          setTimeout(() => {
+            setSuccessfulMessage(null)
+          }, 5000);
         })
         .catch(e => {
           console.log(e)
-          setError('La API ha petado')
+          setErrorMessage('La API ha petado')
           setTimeout(() => {
-            setError('')
-          }, 3000)
+            setErrorMessage(null)
+          }, 5000)
         })
         setNewName('')
         setNewNumber('')
@@ -118,13 +138,17 @@ const App = () => {
               return x < y ? -1 : x > y ? 1 : 0;
             })
           )
+          setSuccessfulMessage(`Contacto añadido: ${newPerson.name} con teléfono ${newPerson.number}`)
+          setTimeout(() => {
+            setSuccessfulMessage(null)
+          }, 5000);
         })
         .catch(e => {
           console.log(e)
-          setError('La API ha petado')
+          setErrorMessage('La API ha petado')
           setTimeout(() => {
-            setError('')
-          }, 3000);
+            setErrorMessage(null)
+          }, 5000);
         })
       setNewName('')
       setNewNumber('')
@@ -188,9 +212,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <NotificationError message={errorMessage} />
+      <NotificationSuccessful message={successfulMessage} />
       <FilterContactName handleNameFilterOnChange={handleNameFilterOnChange} nameFilter={nameFilter} />
       <ContactForm newName={newName} newNumber={newNumber} handleClickOnSubmit={handleClickOnSubmit} handleNameOnChange={handleNameOnChange} handleNumberOnChange={handleNumberOnChange} handleNumberKeyPress={handleNumberKeyPress} />
-      { error.length !== 0 ? <span style={{ "color": "red" }}>{error}</span> : ""}
       <Numbers filteredPersons={filteredPersons} handleClickDeleteContact={handleClickDeleteContact} />
     </div>
   )

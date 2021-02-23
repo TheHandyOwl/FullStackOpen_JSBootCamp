@@ -1,0 +1,29 @@
+{
+  "persons": [
+    {
+      "name": "Arto Hellas",
+      "number": "040 123 456",
+      "id": 1
+    },
+    {
+      "name": "Ada Lovelace",
+      "number": "394 453 235",
+      "id": 2
+    },
+    {
+      "name": "Dan Abramov",
+      "number": "124 323 434",
+      "id": 3
+    },
+    {
+      "name": "Mary Poppendieck",
+      "number": "392 364 231",
+      "id": 4
+    },
+    {
+      "name": "Delete Me",
+      "number": "666 666 666",
+      "id": 5
+    }
+  ]
+}
