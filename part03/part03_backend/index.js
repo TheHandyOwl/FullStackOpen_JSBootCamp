@@ -1,8 +1,10 @@
 const express = require('express')
-const app = express()
+const cors = require('cors')
 
+const app = express()
 const logger = require('./middlewares/loggerMiddleware')
 
+app.use(cors())
 app.use(express.json())
 
 app.use(logger)
@@ -91,7 +93,9 @@ app.use((req, res) => {
   })
 })
 
-const PORT = 3001
+//const PORT = 3001
+const PORT = Number(process.env.PORT) || 3002
+
 app.listen(PORT, () => {
   console.log(`Server running at port ${PORT}`)
 })
