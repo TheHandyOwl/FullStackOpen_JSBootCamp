@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=test nodemon index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
     "eslint": "eslint .",
     "start": "NODE_ENV=production node index.js",
-    "test": "NODE_ENV=test jest --verbose --silent tests/notes.test.js",
+    "test": "NODE_ENV=test jest --verbose --silent tests/users.test.js",
     "test:watch": "npm run test -- --watch"
   },
   "author": "",
@@ -21,6 +21,7 @@
   "dependencies": {
     "@sentry/node": "6.2.3",
     "@sentry/tracing": "6.2.3",
+    "bcrypt": "5.0.1",
     "cors": "2.8.5",
     "dotenv": "8.2.0",
     "express": "4.17.1",

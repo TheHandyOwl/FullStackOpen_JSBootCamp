@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt')
+
 const { app } = require('../index')
 const supertest = require('supertest')
 const api = supertest(app)
@@ -20,6 +22,14 @@ const initialNotes = [
   }
 ]
 
+const initialUsers = [
+  {
+    username: 'Mando',
+    name: 'Din Djarin',
+    password: bcrypt.hash('password', 10)
+  }
+]
+
 const getAllNotesContent = async () => {
   const response = await api.get('/api/notes')
   return {
@@ -28,8 +38,18 @@ const getAllNotesContent = async () => {
   }
 }
 
+const getAllUsersUsername = async () => {
+  const response = await api.get('/api/users')
+  return {
+    theUsersUsername: response.body.map(user => user.username),
+    response
+  }
+}
+
 module.exports = {
   api,
   getAllNotesContent,
-  initialNotes
+  getAllUsersUsername,
+  initialNotes,
+  initialUsers
 }

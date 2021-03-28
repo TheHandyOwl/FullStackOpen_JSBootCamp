@@ -5,14 +5,15 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const logger = require('./middlewares/loggerMiddleware')
-const Note = require('./models/Note')
 const notFound = require('./middlewares/notFound')
 const handleErrors = require('./middlewares/handleErrors')
+
+const notesRouter = require('./controllers/notes')
+const usersRouter = require('./controllers/users')
 
 // Sentry modules
 const Sentry = require('@sentry/node')
 const Tracing = require('@sentry/tracing')
-const { response } = require('express')
 
 app.use(cors())
 app.use(express.json())
@@ -54,123 +55,8 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 
-// V1 /api/notes sin async / await
-/*
-app.get('/api/notes', (req, res, next) => {
-  Note.find({})
-    .then(notes => {
-      res.json(notes)
-    })
-    .catch(err => { next(err) })
-  })
- */
-// V2 /api/notes sin async / await, versión mejorada
-/*
-app.get('/api/notes', (req, res, next) => {
-  Note.find({})
-    .then(notes => res.json(notes))
-})
-*/
-// V3 /api/notes con async / await (si no necesitamos el catch)
-app.get('/api/notes', async (req, res, next) => {
-  const notes = await Note.find({})
-  res.json(notes)
-})
-
-app.get('/api/notes/:id', (req, res, next) => {
-  // const id = req.params.id
-  const { id } = req.params
-
-  Note
-    .findById(id)
-    .then(note => {
-      if (note) {
-        return res.json(note)
-      } else {
-        return res.status(404).end()
-      }
-    })
-    .catch(err => { next(err) })
-})
-
-app.put('/api/notes/:id', (req, res, next) => {
-  const { id } = req.params
-  const note = req.body
-
-  const newNoteInfo = {
-    content: note.content,
-    important: typeof note.important !== 'undefined' ? note.important : false
-  }
-
-  Note
-    .findByIdAndUpdate(id, newNoteInfo, { new: true })
-    .then(result => {
-      console.log({ result })
-      res.status(201).end()
-    })
-    .catch(err => { next(err) })
-})
-
-app.delete('/api/notes/:id', async (req, res, next) => {
-  const { id } = req.params
-  const note = await Note.findByIdAndDelete(id)
-  if (!note) return res.sendStatus(404)
-  res.status(204).end()
-
-  // V1 sin async / await
-  // Note
-  //   .findByIdAndDelete(id)
-  //   .then(() => {
-  //     return res.status(204).end()
-  //   })
-  //   .catch(err => { next(err) })
-
-  // V2 con async / await
-  /*
-  try {
-    await Note.findByIdAndDelete(id)
-    return res.status(204).end()
-  } catch (error) {
-    next(error)
-  }
-  */
-
-  // V3 con async / await y sin catch (entra en el error general)
-  // await Note.findByIdAndDelete(id)
-  // res.status(204).end()
-})
-
-app.post('/api/notes', async (req, res, next) => {
-  const note = req.body
-
-  if (!note || !note.content) {
-    return res.status(400).json({
-      error: 'node.content is missing!'
-    })
-  }
-
-  const newNote = new Note({
-    content: note.content,
-    important: typeof note.important !== 'undefined' ? note.important : false,
-    date: new Date().toISOString()
-  })
-
-  // V1 sin async / await
-  // newNote
-  //   .save()
-  //   .then(savedNote => {
-  //     res.status(201).json(savedNote)
-  //   })
-  //   .catch(err => { next(err) })
-
-  // V2 con async / await
-  try {
-    const savedNote = await newNote.save()
-    res.status(201).json(savedNote)
-  } catch (error) {
-    next(error)
-  }
-})
+app.use('/api/notes', notesRouter)
+app.use('/api/users', usersRouter)
 
 // Middleware - 404 y sin errores
 app.use(notFound)
