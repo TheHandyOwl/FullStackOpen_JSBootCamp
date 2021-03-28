@@ -1,0 +1,7 @@
+DELETE  http://localhost:3001/api/notes/1
+
+###
+DELETE http://localhost:3001/api/notes/6060d035362d97ba2767a2c9
+
+###
+DELETE http://midudev-notes-api-backend.herokuapp.com/api/notes/6060d035362d97ba2767a2c9
